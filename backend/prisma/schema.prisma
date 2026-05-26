@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum TodoStatus {
+  ACTIVE
+  COMPLETED
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  todos     Todo[]
+}
+
+model Todo {
+  id         Int        @id @default(autoincrement())
+  text       String
+  status     TodoStatus @default(ACTIVE)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  category   Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId Int
+}
