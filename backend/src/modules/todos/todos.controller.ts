@@ -12,9 +12,12 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { TodosService, TodoWithCategory } from './todos.service';
-import { CreateTodoDto } from './dto/create-todo.dto';
-import { UpdateTodoDto } from './dto/update-todo.dto';
-import { FilterTodoDto } from './dto/filter-todo.dto';
+import {
+  CreateTodoDto,
+  UpdateTodoDto,
+  FilterTodoDto,
+  BulkUpdateTodoDto,
+} from './dto';
 import { Paginated } from 'src/common/interfaces/paginated.interface';
 
 @Controller('todos')
@@ -34,6 +37,14 @@ export class TodosController {
     @Body() createTodoDto: CreateTodoDto,
   ): Promise<TodoWithCategory> {
     return this.todosService.create(createTodoDto);
+  }
+
+  @Patch('bulk')
+  @HttpCode(HttpStatus.OK)
+  async bulkUpdate(
+    @Body() bulkUpdateDto: BulkUpdateTodoDto,
+  ): Promise<{ count: number }> {
+    return this.todosService.bulkUpdate(bulkUpdateDto);
   }
 
   @Patch(':id')

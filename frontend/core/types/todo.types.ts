@@ -20,3 +20,8 @@ export type TodoFilter = {
   page?: number;
   limit?: number;
 };
+
+export type BulkUpdateTodoDto = {
+  ids: number[];
+  status: TodoStatus;
+};

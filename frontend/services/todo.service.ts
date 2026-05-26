@@ -1,5 +1,5 @@
 import { CreateTodoDto, UpdateTodoDto } from '@/core/schemas';
-import { Paginated, Todo, TodoFilter } from '@/core/types';
+import { BulkUpdateTodoDto, Paginated, Todo, TodoFilter } from '@/core/types';
 
 import { httpService } from './http.service';
 
@@ -20,6 +20,13 @@ class TodoService {
 
   async remove(id: number): Promise<{ message: string }> {
     return httpService.delete<{ message: string }>(`${this.baseUrl}/${id}`);
+  }
+
+  async bulkUpdate(dto: BulkUpdateTodoDto): Promise<{ count: number }> {
+    return httpService.patch<{ count: number }, BulkUpdateTodoDto>(
+      `${this.baseUrl}/bulk`,
+      dto,
+    );
   }
 }
 

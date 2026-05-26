@@ -5,9 +5,12 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { CategoriesService } from '../categories/categories.service';
-import { CreateTodoDto } from './dto/create-todo.dto';
-import { UpdateTodoDto } from './dto/update-todo.dto';
-import { FilterTodoDto } from './dto/filter-todo.dto';
+import {
+  CreateTodoDto,
+  UpdateTodoDto,
+  FilterTodoDto,
+  BulkUpdateTodoDto,
+} from './dto';
 import { Paginated } from '../../common/interfaces/paginated.interface';
 import { getPaginationParams, paginate } from 'src/common/utils/paginate.util';
 import { Todo, TodoStatus } from '@prisma/client';
@@ -101,5 +104,25 @@ export class TodosService {
     }
 
     return todo;
+  }
+
+  async bulkUpdate(dto: BulkUpdateTodoDto): Promise<{ count: number }> {
+    const existing = await this.prisma.todo.findMany({
+      where: { id: { in: dto.ids } },
+      select: { id: true },
+    });
+
+    if (existing.length !== dto.ids.length) {
+      const foundIds = existing.map((t) => t.id);
+      const missing = dto.ids.filter((id) => !foundIds.includes(id));
+      throw new NotFoundException(`Todos not found: ${missing.join(', ')}`);
+    }
+
+    const { count } = await this.prisma.todo.updateMany({
+      where: { id: { in: dto.ids } },
+      data: { status: dto.status },
+    });
+
+    return { count };
   }
 }
