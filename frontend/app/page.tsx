@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+
+import { toast } from 'sonner';
 
 import { CategorySelect } from '@/components/category/category-select';
 import {
@@ -10,13 +12,19 @@ import {
   TodoError,
   TodoListSkeleton,
 } from '@/components/todo';
-import { TodoFilter } from '@/core/types';
+import { Todo, TodoFilter, TodoStatus } from '@/core/types';
+import { useTodoDeleteMutation } from '@/hooks/use-todo-delete-mutation';
+import { useTodoUpdateMutation } from '@/hooks/use-todo-update-mutation';
 import { useTodosInfiniteQuery } from '@/hooks/use-todos-infinite-query';
 
 export default function HomePage() {
   const [filter, setFilter] = useState<Omit<TodoFilter, 'page'>>({});
+  const timers = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
   const { data, isLoading, isError, error, refetch } = useTodosInfiniteQuery(filter);
+
+  const { mutate: updateTodo } = useTodoUpdateMutation();
+  const { mutate: deleteTodo } = useTodoDeleteMutation();
 
   const todos = data?.pages.flatMap((page) => page.data) ?? [];
   const total = data?.pages[0]?.meta.total ?? 0;
@@ -27,6 +35,57 @@ export default function HomePage() {
       ...prev,
       categoryId: value === 'all' ? undefined : Number(value),
     }));
+  };
+
+  const startTimer = (id: number, onConfirm: () => void) => {
+    const timer = setTimeout(() => {
+      onConfirm();
+      timers.current.delete(id);
+    }, 5000);
+
+    timers.current.set(id, timer);
+  };
+
+  const cancelTimer = (id: number) => {
+    const timer = timers.current.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      timers.current.delete(id);
+    }
+  };
+
+  const handleToggle = (todo: Todo, undoOptimistic: () => void) => {
+    startTimer(todo.id, () => {
+      updateTodo({ id: todo.id, dto: { status: TodoStatus.COMPLETED } });
+    });
+
+    toast.info('Task completion...', {
+      duration: 5000,
+      action: {
+        label: 'Undo',
+        onClick: () => {
+          cancelTimer(todo.id);
+          undoOptimistic();
+        },
+      },
+    });
+  };
+
+  const handleDelete = (todo: Todo, undoOptimistic: () => void) => {
+    startTimer(todo.id, () => {
+      deleteTodo(todo.id);
+    });
+
+    toast.info('Task deleting...', {
+      duration: 5000,
+      action: {
+        label: 'Undo',
+        onClick: () => {
+          cancelTimer(todo.id);
+          undoOptimistic();
+        },
+      },
+    });
   };
 
   return (
@@ -57,7 +116,12 @@ export default function HomePage() {
           ) : (
             <div className="flex flex-col gap-3">
               {todos.map((todo) => (
-                <TodoCard key={todo.id} todo={todo} onToggle={() => {}} onDelete={() => {}} />
+                <TodoCard
+                  key={todo.id}
+                  todo={todo}
+                  onToggle={handleToggle}
+                  onDelete={handleDelete}
+                />
               ))}
             </div>
           )}

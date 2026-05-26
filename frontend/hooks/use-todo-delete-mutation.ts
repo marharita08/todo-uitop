@@ -10,7 +10,7 @@ export function useTodoDeleteMutation() {
 
   return useAppMutation<{ message: string }, Error, number>({
     mutationFn: (id) => todoService.remove(id),
-    successMessage: 'Task deleted successfully',
+    successMessage: 'Task deleted',
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.TODOS] });
     },

@@ -17,6 +17,7 @@ export function useTodoUpdateMutation() {
 
   return useAppMutation<Todo, Error, UpdateTodoVariables>({
     mutationFn: ({ id, dto }) => todoService.update(id, dto),
+    successMessage: 'Task completed',
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.TODOS] });
     },
