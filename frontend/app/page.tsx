@@ -3,11 +3,15 @@
 import { useState } from 'react';
 
 import { CategorySelect } from '@/components/category/category-select';
-import { TodoCard, TodoEmpty, TodoError, TodoListSkeleton } from '@/components/todo';
-
-import { useTodosInfiniteQuery } from '@/hooks/use-todos-infinite-query';
-
+import {
+  TodoCard,
+  TodoCreateDialog,
+  TodoEmpty,
+  TodoError,
+  TodoListSkeleton,
+} from '@/components/todo';
 import { TodoFilter } from '@/core/types';
+import { useTodosInfiniteQuery } from '@/hooks/use-todos-infinite-query';
 
 export default function HomePage() {
   const [filter, setFilter] = useState<Omit<TodoFilter, 'page'>>({});
@@ -30,7 +34,8 @@ export default function HomePage() {
       <div className="flex flex-col gap-6">
         <div>
           <h1 className="text-2xl font-bold">Tasks</h1>
-          <p className="text-muted-foreground text-sm">{total} tasks total</p>
+          <p className="text-muted-foreground mb-4 text-sm">{total} tasks total</p>
+          <TodoCreateDialog />
         </div>
 
         <div className="w-full">

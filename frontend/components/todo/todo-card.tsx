@@ -2,7 +2,6 @@ import { Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-
 import { cn } from '@/core/lib/utils';
 import { Todo, TodoStatus } from '@/core/types';
 
