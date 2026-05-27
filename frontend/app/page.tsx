@@ -102,8 +102,13 @@ export default function HomePage() {
 
   const handleSelect = (todo: Todo) => {
     setSelectedIds((prev) => {
-      const next = new Array(...prev);
-      return new Set(next.filter((id) => id !== todo.id));
+      const next = new Set(prev);
+      if (next.has(todo.id)) {
+        next.delete(todo.id);
+      } else {
+        next.add(todo.id);
+      }
+      return next;
     });
   };
 

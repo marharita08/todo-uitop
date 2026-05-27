@@ -6,6 +6,7 @@ import { TodosModule } from './modules/todos/todos.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { PrismaService } from './modules/prisma/prisma.service';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -19,5 +20,6 @@ import { PrismaService } from './modules/prisma/prisma.service';
     PrismaModule,
   ],
   providers: [PrismaService],
+  controllers: [AppController],
 })
 export class AppModule {}
