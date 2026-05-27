@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-
 import { useCategoriesInfiniteQuery } from '@/hooks/use-categories-infinite-query';
 
 interface CategorySelectProps {
