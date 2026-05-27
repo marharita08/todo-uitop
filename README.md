@@ -1,6 +1,9 @@
 # Todo App
  
 A full-stack task management application built with Next.js and NestJS.
+
+> [!NOTE]
+> The live backend is deployed on Render using a free tier. It may take some time (up to 1 minute) to "wake up" on the first request if it has been inactive for a while.
  
 ## Features
  
